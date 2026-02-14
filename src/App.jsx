@@ -10,11 +10,12 @@ function App() {
       <h1>Cron Expression Visualizer</h1>
     </header>
     <main>
-      <div className="container">
-        <h2>Part 1: Cron Expression Evaluator</h2>
+      <div className='container'>
+        <h2>Cron Expression Evaluator</h2>
         <CronExpressionEvaluator />
-        
-        <h2>Part 2: Recurrence Pattern Generator</h2>
+      </div>
+      <div className='container'>
+        <h2>Recurrence Pattern Generator</h2>
         <RecurrencePatternGenerator />
       </div>
     </main>

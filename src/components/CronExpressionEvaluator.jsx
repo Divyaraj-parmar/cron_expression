@@ -1,65 +1,67 @@
 
 
-/*
-
-Create Cron Expression Parsing Module that has the following functionalities.
-
-1. Renders cron expression input field
-
-2. Parses and displays individual cron fields accurately
-
-Example:
-Input: '0 15 12 1 JAN MON'
-Output:
-Seconds: 0 (active)
-Minutes: 15 (active)
-Hours: 12 (active)
-Days: 1 (active)
-Month: JAN (active)
-Day of Week: MON (active)
-
-3. Handles default values appropriately when * is used
-
-Example:
-Input: '* * * * * *'
-Output:
-Seconds: *
-Minutes: *
-Hours: *
-Days: *
-Month: *
-Day of Week: *
-
-4. Resets all fields gracefully when an invalid cron expression is detected (e.g., incorrect number of parts)
-
-Example:
-Input: '0 15 12 1 JAN'
-Output:
-Seconds: *
-Minutes: *
-Hours: *
-Days: *
-Month: *
-Day of Week: *
-
-5. Trims extra spaces and still parses the expression correctly
-
-Example:
-Input: '    0    15   12    1    JAN    MON   '
-Output:
-Seconds: 0 (active)
-Minutes: 15 (active)
-Hours: 12 (active)
-Days: 1 (active)
-Month: JAN (active)
-Day of Week: MON (active)
-
-NOTE: You are free to implement the task in any other way as well but shouldn't be hardcoded.
-
-*/
 import React, { useState, useMemo } from 'react';
 
 const FIELD_NAMES = ['Seconds', 'Minutes', 'Hours', 'Days', 'Month', 'Day of Week'];
+
+const PREVIEW_FIELDS = [
+  { label: 'minute (0-59)', index: 1 },
+  { label: 'hour (0 - 23)', index: 2 },
+  { label: 'day of the month (1 - 31)', index: 3 },
+  { label: 'month (1 - 12)', index: 4 },
+  { label: 'day of the week (0 - 6)', index: 5 },
+];
+
+const EXAMPLES = [
+  {
+    title: 'Parses and displays individual cron fields accurately',
+    input: "0 15 12 1 JAN MON",
+    output: [
+      'Seconds: 0 (active)',
+      'Minutes: 15 (active)',
+      'Hours: 12 (active)',
+      'Days: 1 (active)',
+      'Month: JAN (active)',
+      'Day of Week: MON (active)',
+    ],
+  },
+  {
+    title: 'Handles default values appropriately when * is used',
+    input: '* * * * * *',
+    output: [
+      'Seconds: *',
+      'Minutes: *',
+      'Hours: *',
+      'Days: *',
+      'Month: *',
+      'Day of Week: *',
+    ],
+  },
+  {
+    title: 'Resets all fields gracefully when an invalid cron expression is detected',
+    input: '0 15 12 1 JAN',
+    output: [
+      'Seconds: *',
+      'Minutes: *',
+      'Hours: *',
+      'Days: *',
+      'Month: *',
+      'Day of Week: *',
+    ],
+  },
+  {
+    title: 'Trims extra spaces and still parses the expression correctly',
+    input: '    0    15   12    1    JAN    MON   ',
+    output: [
+      'Seconds: 0 (active)',
+      'Minutes: 15 (active)',
+      'Hours: 12 (active)',
+      'Days: 1 (active)',
+      'Month: JAN (active)',
+      'Day of Week: MON (active)',
+    ],
+  },
+];
 
 function parseCronExpression(input) {
   if (!input || typeof input !== 'string') {
@@ -89,28 +91,48 @@ const CronExpressionEvaluator = () => {
   return (
     <div className="cron-evaluator">
       <div className="cron-inputs">
-        <label htmlFor="cronInput">Cron Expression</label>
-        <input
-          type="text"
-          id="cronInput"
-          value={cronInput}
-          onChange={handleInputChange}
-          placeholder="e.g., 0 15 12 1 JAN MON or * * * * * *"
-        />
+        <label htmlFor="cronInput" className="cron-inputs-title">Cron Expression</label>
+        <div className="cron-inputs-input">
+          <input
+            type="text"
+            id="cronInput"
+            value={cronInput}
+            onChange={handleInputChange}
+            placeholder="e.g., 0 15 12 1 JAN MON or * * * * * *"
+          />
+        </div>
       </div>
-
+      <h4>Parsed Fields</h4>
+      <p className="cron-fields-intro">The cron expression is made of five fields. Each field can have the following values.</p>
       <div className="cron-fields-preview">
-        <h4>Parsed Fields</h4>
-        {FIELD_NAMES.map((name, i) => (
-          <div key={name} className="cron-field">
-            <strong>{name}:</strong>{' '}
-            <span className="cron-field-value">{parsedFields[i].value}</span>
-            {parsedFields[i].active && (
-              <span className="field-indicator" aria-label="active"> (active)</span>
-            )}
-          </div>
+        {PREVIEW_FIELDS.map(({ label, index }) => (
+          <div key={`value-${label}`} className="cron-field-value-cell">{parsedFields[index].value}</div>
+        ))}
+        {PREVIEW_FIELDS.map(({ label }) => (
+          <div key={`label-${label}`} className="cron-field-label-cell">{label}</div>
         ))}
       </div>
+
+      <section className="cron-examples">
+        <h4>Examples</h4>
+        {EXAMPLES.map((example, i) => (
+          <div key={i} className="cron-example-block">
+            <div className="cron-example-title">{example.title}</div>
+            <div className="cron-example-row">
+              <span className="cron-example-label">Input:</span>
+              <code className="cron-example-input">{example.input}</code>
+            </div>
+            <div className="cron-example-row">
+              <span className="cron-example-label">Output:</span>
+              <ul className="cron-example-output">
+                {example.output.map((line, j) => (
+                  <li key={j}>{line}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </section>
     </div>
   );
 };
